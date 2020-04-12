@@ -9,40 +9,62 @@ const rl = readline.createInterface({
 });
 
 
-rl.question('digite a cidade  : ', (city) => {
-   
-        let searchCity = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${token}&lang=pt_br&units=metric`
-        
-        http.get(searchCity, (data) => {
-            
-            data.setEncoding('utf8')
-            let rawData = '';
-            data.on('data', (chunk) => { rawData += chunk; })
-            data.on('end', () => {
-                try {
-                    const parsedData = JSON.parse(rawData)
-                    const weatherCurrent = parsedData.weather[0]
+ function verifyWeather(city) {
 
-                    const information = {
-                        "Cidade" : parsedData.name ,
-                        "Pais": parsedData.sys.country,
-                        "Tempo" : weatherCurrent.main,
-                        "Estado" : weatherCurrent.description,
-                        "Temperatura" : parsedData.main.temp,
-                    }
+    let searchCity = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${token}&lang=pt_br&units=metric`
+    
+    http.get(searchCity, (data) => {
 
-                    console.log(information)
-
-                } catch (e) {
-                    console.error(e.message)
+        data.setEncoding('utf8')
+        let rawData = '';
+        data.on('data', (chunk) => { rawData += chunk; })
+        data.on('end', () => {
+            try {
+                const parsedData = JSON.parse(rawData)
+                const weatherCurrent = parsedData.weather[0]
+                
+                const information = {
+                    "Cidade": parsedData.name,
+                    "Pais": parsedData.sys.country,
+                    "Tempo": weatherCurrent.main,
+                    "Estado": weatherCurrent.description,
+                    "Temperatura": parsedData.main.temp,
                 }
-            });
-        }).on('error', (e) => {
-            console.error(`Got error: ${e.message}`)
-            
 
-        });
+                console.log(information)
+
+                
+            } catch (e) {
+                console.error(e.message)
+            }
+        })
+    }).on('error', (e) => {
+        console.error(`Got error: ${e.message}`)
+        
+    })
+    
+}
 
 
-})
+ function weatherInOtherCity() {
+    rl.question('Digite a Cidade :', (city) => {
+        
+       verifyWeather(city)
+        
+    })
+}
 
+ function  favorityCity(){
+    let citys = ["Alegre", "Linhares", "São Mateus", "Vitoria"]
+    for (let i = 0; i < citys.length; i++) {
+        verifyWeather(citys[i])
+       
+        
+    }
+
+}
+
+
+// Init
+
+favorityCity()
