@@ -11,7 +11,7 @@ const rl = readline.createInterface({
 
 rl.question('digite a cidade  : ', (city) => {
    
-        let searchCity = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${token}`
+        let searchCity = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${token}&lang=pt_br&units=metric`
         
         http.get(searchCity, (data) => {
             
@@ -21,7 +21,17 @@ rl.question('digite a cidade  : ', (city) => {
             data.on('end', () => {
                 try {
                     const parsedData = JSON.parse(rawData)
-                    console.log(parsedData)
+                    const weatherCurrent = parsedData.weather[0]
+
+                    const information = {
+                        "Cidade" : parsedData.name ,
+                        "Pais": parsedData.sys.country,
+                        "Tempo" : weatherCurrent.main,
+                        "Estado" : weatherCurrent.description,
+                        "Temperatura" : parsedData.main.temp,
+                    }
+
+                    console.log(information)
 
                 } catch (e) {
                     console.error(e.message)
